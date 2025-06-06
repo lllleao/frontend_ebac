@@ -1,0 +1,116 @@
+import { useState } from 'react'
+import * as S from './styles'
+import Input from '../../components/Input'
+import { sanitizeInput, validatePassword } from '../../utils'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+
+const SignUp = () => {
+    const [email, setEmail] = useState('')
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+
+    const navigate = useNavigate()
+
+    const [emailEmpty, setEmailEmpty] = useState(false)
+    const [usernameEmpty, setUsernameEmpty] = useState(false)
+    const [passwordEmpty, setPasswordEmpty] = useState(false)
+
+    const [passwordError, setPasswordError] = useState(false)
+
+    const handleSubmit = (event: React.FormEvent) => {
+        event.preventDefault()
+
+        const sanitizedEmail = sanitizeInput(email)
+        const sanitizedPassword = sanitizeInput(password)
+        const sanitizedName = sanitizeInput(username)
+
+        if (sanitizedEmail.length === 0) {
+            setEmailEmpty(true)
+        } else {
+            setEmailEmpty(false)
+        }
+
+        if (sanitizedName.length === 0) {
+            setUsernameEmpty(true)
+        } else {
+            setUsernameEmpty(false)
+        }
+
+        if (!validatePassword(sanitizedPassword)) {
+            setPasswordError(true)
+            setPasswordEmpty(true)
+            console.log('error')
+            return ''
+        } else {
+            setPasswordError(false)
+            setPasswordEmpty(false)
+        }
+
+        if (
+            sanitizedEmail.length !== 0 &&
+            sanitizedName.length !== 0 &&
+            validatePassword(sanitizedPassword)
+        ) {
+            axios
+                .post('http://127.0.0.1:8000/api/users/', {
+                    username: sanitizedName,
+                    email: sanitizedEmail,
+                    password: sanitizedPassword
+                })
+                .then((res) => {
+                    console.log(res.status)
+                    navigate('/')
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }
+    }
+
+    return (
+        <S.Container>
+            <S.Card>
+                <S.Title>Create Account</S.Title>
+                <form onSubmit={handleSubmit}>
+                    <Input
+                        typeInput="email"
+                        placeholderInput="Email"
+                        valueInput={email}
+                        setValue={setEmail}
+                        inputBorderColor={emailEmpty}
+                    />
+                    <Input
+                        typeInput="text"
+                        placeholderInput="Username"
+                        valueInput={username}
+                        setValue={setUsername}
+                        inputBorderColor={usernameEmpty}
+                    />
+                    <Input
+                        typeInput="password"
+                        placeholderInput="Password"
+                        valueInput={password}
+                        setValue={setPassword}
+                        inputBorderColor={passwordEmpty}
+                    />
+                    {passwordError ? (
+                        <S.PassWordError>
+                            A senha deve ter pelo menos 8 caracteres, misturando
+                            pelo menos números e letras, e não pode ser uma
+                            sequência numérica ou alfabética.
+                        </S.PassWordError>
+                    ) : (
+                        ''
+                    )}
+                    <S.Button type="submit">Sign Up</S.Button>
+                </form>
+                <S.SignInLink>
+                    Já tem uma conta? <a href="/">Log in</a>
+                </S.SignInLink>
+            </S.Card>
+        </S.Container>
+    )
+}
+
+export default SignUp
