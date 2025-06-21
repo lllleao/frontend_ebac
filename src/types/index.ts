@@ -4,19 +4,34 @@ export interface User {
     username: string
     avatar: string
     isFollowing: boolean
+    bio: string
 }
 
 export interface Comment {
     id: string
-    user: User
-    content: string
-    createdAt: Date
+    autor: User
+    texto: string
+    criado_em: Date
+    post: number
 }
 
-export interface Tweet {
-    id: string
-    user: User
-    content: string
-    createdAt: Date
-    comments: Comment[]
+export interface Author {
+    username: string
+    id: number
+    avatar: string
+    complet_name: string
 }
+
+export interface Post {
+    id: number
+    autor: Author
+    conteudo: string
+    comentarios: Comment[]
+    criado_em: Date
+}
+
+// export interface ProfileData {
+//     bio: string
+//     username: string
+//     followers: string
+// }

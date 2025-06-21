@@ -6,10 +6,10 @@ interface FollowButtonProps {
     onFollowChange: (isFollowing: boolean) => void
 }
 
-export function FollowButton({
+const FollowButton = ({
     initialFollowState,
     onFollowChange
-}: FollowButtonProps) {
+}: FollowButtonProps) => {
     const [isFollowing, setIsFollowing] = useState(initialFollowState)
 
     const handleFollow = () => {
@@ -23,3 +23,5 @@ export function FollowButton({
         </Button>
     )
 }
+
+export default FollowButton

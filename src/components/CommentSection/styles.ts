@@ -2,6 +2,15 @@ import { styled } from 'styled-components'
 
 export const Section = styled.div`
     margin-top: 10px;
+    .date-button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        span {
+            font-size: 1rem;
+            font-family: sans-serif;
+        }
+    }
 `
 
 export const Input = styled.input`

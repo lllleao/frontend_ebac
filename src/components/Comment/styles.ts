@@ -10,13 +10,17 @@ const slideIn = keyframes`
         opacity: 1;
     }
 `
-
 export const CommentContainer = styled.div`
     animation: ${slideIn} 0.6s ease-out;
     display: flex;
     align-items: flex-start;
     gap: 10px;
     margin-top: 8px;
+    margin: 1rem 0;
+    .icon {
+        font-size: 22px;
+        cursor: pointer;
+    }
 `
 
 export const CommentContent = styled.div`

@@ -1,46 +1,42 @@
 import { useEffect, useState } from 'react'
-import { Tweet } from '../../types'
-import { tweets as initialTweets } from '../../data/tweets'
-import { TweetCard } from '../../components/TweetCard'
-import { v4 as uuidv4 } from 'uuid'
+import { Post } from '../../types'
 import { FeedContainer, Input, NewTweetArea, PostButton } from './styles'
-import api from '../../utils/reqs'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import parseJwt from '../../utils/parseJWT'
+import TweetCard from '../../components/TweetCard'
 
-const TweetFeed = ({
-    onFollowChange
-}: {
+type Props = {
     onFollowChange: (userId: string, isFollowing: boolean) => void
-}) => {
-    const [tweets, setTweets] = useState<Tweet[]>(initialTweets)
+    updatePost: boolean
+}
+
+const TweetFeed = ({ onFollowChange, updatePost }: Props) => {
     const [newTweet, setNewTweet] = useState('')
+    const token = localStorage.getItem('access')
+    const [update, setUpdate] = useState(false)
+
+    const [posts, setPosts] = useState<Post[]>()
+    const [postsOtherUsers, setPostsOtherUsers] = useState<Post[]>()
 
     const navigate = useNavigate()
 
     const handlePostTweet = () => {
         if (!newTweet.trim()) return
-
-        const newTweetObj: Tweet = {
-            id: uuidv4(),
-            user: {
-                id: 'current_user',
-                name: 'Você',
-                username: 'seuusuario',
-                avatar: 'https://i.pravatar.cc/150?img=4',
-                isFollowing: false
-            },
-            content: newTweet.trim(),
-            createdAt: new Date(),
-            comments: []
-        }
-
-        setTweets([newTweetObj, ...tweets])
-        setNewTweet('')
-        api.post('/posts/', {
-            conteudo: 'Estou muito feliz'
-        })
-            .then((res) => {
-                console.log(res.data)
+        axios
+            .post(
+                'http://localhost:8000/api/posts/',
+                {
+                    conteudo: newTweet
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+            .then(() => {
+                setUpdate(!update)
             })
             .catch((error) => {
                 console.error(
@@ -52,53 +48,40 @@ const TweetFeed = ({
                     navigate('/')
                 }
             })
-    }
-
-    const handleLike = (tweetId: string) => {
-        console.log('Liked tweet:', tweetId)
-    }
-
-    const handleComment = (tweetId: string, commentText: string) => {
-        setTweets((prev) =>
-            prev.map((tweet) =>
-                tweet.id === tweetId
-                    ? {
-                          ...tweet,
-                          comments: [
-                              ...tweet.comments,
-                              {
-                                  id: uuidv4(),
-                                  content: commentText,
-                                  createdAt: new Date(),
-                                  user: {
-                                      id: 'current_user',
-                                      name: 'Você',
-                                      username: 'seuusuario',
-                                      avatar: 'https://i.pravatar.cc/150?img=4',
-                                      isFollowing: false
-                                  }
-                              }
-                          ]
-                      }
-                    : tweet
-            )
-        )
     }
 
     useEffect(() => {
-        api.get('/posts/')
-            .then((res) => console.log(res.data))
-            .catch((error) => {
-                console.error(
-                    'Erro ao buscar dados do usuário:',
-                    error.response?.data || error.message
-                )
+        const payload = parseJwt(token)
 
-                if (error.response?.data.code === 'token_not_valid') {
-                    navigate('/')
+        axios
+            .get(
+                `http://localhost:8000/api/posts/?user_id=${payload.user_id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+            .then((res) => {
+                setPosts(res.data)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+
+        axios
+            .get(`http://localhost:8000/api/posts/?exclude_user=me`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
                 }
             })
-    }, [])
+            .then((res) => {
+                setPostsOtherUsers(res.data)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+    }, [update, updatePost])
 
     return (
         <FeedContainer>
@@ -110,16 +93,27 @@ const TweetFeed = ({
                 />
                 <PostButton onClick={handlePostTweet}>Tweet</PostButton>
             </NewTweetArea>
-
-            {tweets.map((tweet) => (
-                <TweetCard
-                    key={tweet.id}
-                    tweet={tweet}
-                    onFollowChange={onFollowChange}
-                    onLike={handleLike}
-                    onComment={handleComment}
-                />
-            ))}
+            {posts &&
+                posts.map((post) => (
+                    <TweetCard
+                        key={post.id}
+                        tweet={post}
+                        onFollowChange={onFollowChange}
+                        setUpdate={setUpdate}
+                        update={update}
+                        isUser
+                    />
+                ))}
+            {postsOtherUsers &&
+                postsOtherUsers.map((post) => (
+                    <TweetCard
+                        key={post.id}
+                        tweet={post}
+                        onFollowChange={onFollowChange}
+                        setUpdate={setUpdate}
+                        update={update}
+                    />
+                ))}
         </FeedContainer>
     )
 }

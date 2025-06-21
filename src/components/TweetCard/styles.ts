@@ -8,7 +8,10 @@ const fadeIn = keyframes`
         opacity: 1;
     }
 `
-
+export const DeleteIcon = styled.div`
+    font-family: sans-serif;
+    cursor: pointer;
+`
 export const Card = styled.div`
     background: #fff;
     border: 1px solid #ddd;

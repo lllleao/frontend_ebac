@@ -5,7 +5,7 @@ import { sanitizeInput, validatePassword } from '../../utils'
 import { PassWordError } from '../SignUp/styles'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import api from '../../utils/reqs'
+import CredentialError from '../../components/CredentialError'
 
 const Login = () => {
     const [email, setEmail] = useState('')
@@ -13,6 +13,8 @@ const Login = () => {
 
     const [emailEmpty, setEmailEmpty] = useState(false)
     const [passwordEmpty, setPasswordEmpty] = useState(false)
+
+    const [cardout, setCardOut] = useState(false)
 
     const navigate = useNavigate()
 
@@ -44,14 +46,12 @@ const Login = () => {
                     password: sanitizedPassword
                 })
                 .then(() => {
-                    console.log(sanitizedEmail, sanitizedPassword)
                     axios
                         .post('http://127.0.0.1:8000/api/token/', {
                             email: sanitizedEmail,
                             password: sanitizedPassword
                         })
                         .then((res) => {
-                            console.log(res.data)
                             localStorage.setItem('access', res.data.access)
                             localStorage.setItem('refresh', res.data.refresh)
                         })
@@ -64,26 +64,23 @@ const Login = () => {
                 })
                 .catch((err) => {
                     console.log(err, 'não logou')
+                    setCardOut(true)
                 })
         }
     }
 
     useEffect(() => {
         setTimeout(() => {
-            api.get('/user_data')
-                .then((response) => {
-                    // console.log(response.data)
-                })
-                .catch((error) => {
-                    console.error(
-                        'Erro ao buscar dados do usuário:',
-                        error.response?.data || error.message
-                    )
-                    if (error.response?.data.code === 'token_not_valid') {
-                        localStorage.removeItem('access')
-                        localStorage.removeItem('refresh')
-                    }
-                })
+            axios.get('http://127.0.0.1:8000/api/user_data').catch((error) => {
+                console.error(
+                    'Erro ao buscar dados do usuário:',
+                    error.response?.data || error.message
+                )
+                if (error.response?.data.code === 'token_not_valid') {
+                    localStorage.removeItem('access')
+                    localStorage.removeItem('refresh')
+                }
+            })
         }, 2000)
     }, [])
 
@@ -121,6 +118,7 @@ const Login = () => {
                     Não tem uma conta? <a href="/signup">Sign up</a>
                 </S.SignUpLink>
             </S.Card>
+            <CredentialError isSign cardout={cardout} />
         </S.Container>
     )
 }

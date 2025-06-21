@@ -1,11 +1,13 @@
 import { Img } from './style'
 
-interface AvatarProps {
+type AvatarProps = {
     src: string
     alt: string
     size?: number
 }
 
-export function Avatar({ src, alt, size = 40 }: AvatarProps) {
+const Avatar = ({ src, alt, size = 40 }: AvatarProps) => {
     return <Img src={src} alt={alt} $size={size} />
 }
+
+export default Avatar

@@ -10,15 +10,24 @@ import {
     Title
 } from './styles'
 import { useNavigate } from 'react-router-dom'
-import api from '../../utils/reqs'
+import { User } from '../../types'
+import axios from 'axios'
 
 type ProfileSummaryProps = {
     followers: number
-    username: string | undefined
+    setUpdatePost: (value: React.SetStateAction<boolean>) => void
+    updatePost: boolean
 }
 
-const ProfileSummary = ({ followers, username }: ProfileSummaryProps) => {
+const ProfileSummary = ({
+    followers,
+    setUpdatePost,
+    updatePost
+}: ProfileSummaryProps) => {
+    const token = localStorage.getItem('access')
+
     const [bio, setBio] = useState('')
+    const [data, setData] = useState<User>()
     const [isEditing, setIsEditing] = useState(false)
     const [bioBefore, setBioBefore] = useState('')
     const navigate = useNavigate()
@@ -35,13 +44,21 @@ const ProfileSummary = ({ followers, username }: ProfileSummaryProps) => {
     const handleSaveClick = () => {
         if (!(bioBefore === bio)) {
             console.log(bioBefore, bio)
-            api.patch('/update_bio/', { bio })
+            axios
+                .patch(
+                    'http://127.0.0.1:8000/api/update_bio/',
+                    { bio },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                )
                 .then(() => {
-                    // console.log(res.data.bio)
-                    setBioBefore(bio)
+                    setBioBefore(bio as string)
                 })
                 .catch((error) => {
-                    console.log(error)
+                    console.log(error, 'erro da bio')
                     if (error.response?.data.code === 'token_not_valid') {
                         navigate('/')
                     }
@@ -51,9 +68,17 @@ const ProfileSummary = ({ followers, username }: ProfileSummaryProps) => {
     }
 
     const handleLogout = () => {
-        api.post('/logout/', { refresh })
-            .then((res) => {
-                console.log(res.data)
+        axios
+            .post(
+                'http://127.0.0.1:8000/api/logout/',
+                { refresh },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+            .then(() => {
                 localStorage.removeItem('access')
                 localStorage.removeItem('refresh')
                 navigate('/')
@@ -74,29 +99,17 @@ const ProfileSummary = ({ followers, username }: ProfileSummaryProps) => {
     const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) {
-            const allowedTypes = [
-                'image/jpeg',
-                'image/png',
-                'image/gif',
-                'image/webp'
-            ]
-
-            if (!allowedTypes.includes(file.type)) {
-                alert(
-                    'Tipo de arquivo não permitido. Selecione uma imagem JPG, PNG, GIF ou WEBP.'
-                )
-                return
-            }
             const formData = new FormData()
             formData.append('avatar', file)
-            api.patch('/avatar/', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
+            axios
+                .patch('http://127.0.0.1:8000/api/avatar/', formData, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 .then((res) => {
-                    console.log(res)
                     setMediaUrl(res.data.avatar_url)
+                    setUpdatePost(!updatePost)
                 })
                 .catch((err) => {
                     console.log(err)
@@ -106,11 +119,15 @@ const ProfileSummary = ({ followers, username }: ProfileSummaryProps) => {
 
     useEffect(() => {
         setTimeout(() => {
-            api.get('/user_data')
+            axios
+                .get('http://127.0.0.1:8000/api/user_data', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
                 .then((response) => {
-                    console.log(response.data)
+                    setData(response.data)
                     setBio(response.data.bio)
-                    setBioBefore(response.data.bio)
                 })
                 .catch((error) => {
                     console.error(
@@ -118,29 +135,29 @@ const ProfileSummary = ({ followers, username }: ProfileSummaryProps) => {
                         error.response?.data || error.message
                     )
                     if (error.response?.data.code === 'token_not_valid') {
-                        localStorage.removeItem('access')
-                        localStorage.removeItem('refresh')
                         navigate('/')
                     }
                 })
-        }, 2000)
 
-        api.get('/avatar/')
-            .then((res) => {
-                console.log(res)
-                setMediaUrl(res.data.avatar_url)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-    }, [bio])
+            axios
+                .get('http://127.0.0.1:8000/api/avatar/', {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                .then((res) => {
+                    setMediaUrl(res.data.avatar_url)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }, 2000)
+    }, [])
 
     return (
         <Container>
             <Section>
-                <Avatar $backgound={mediaUrl}>
-                    {/* <img src={mediaUrl} alt="" /> */}
-                </Avatar>
+                <Avatar $backgound={mediaUrl} />
                 <ButtonDisplay>
                     <input
                         ref={refImage}
@@ -153,7 +170,7 @@ const ProfileSummary = ({ followers, username }: ProfileSummaryProps) => {
                     </button>
                 </ButtonDisplay>
                 <Title>Seu Perfil</Title>
-                <Info>Usuário: @{username}</Info>
+                <Info>Usuário: @{data?.username}</Info>
                 <Info>Seguidores: {followers}</Info>
                 <Info>Bio:</Info>
 

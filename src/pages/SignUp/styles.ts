@@ -4,8 +4,10 @@ export const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     height: 100vh;
     background-color: #e6ecf0;
+    gap: 1rem;
 `
 
 export const Card = styled.div`

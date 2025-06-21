@@ -9,3 +9,17 @@ export const validatePassword = (password: string): boolean => {
 
     return hasMinLength && !isNumeric && !isAlpha
 }
+
+export const dateFormat = (date: Date) => {
+    const data = new Date(date)
+    const opcoes: Intl.DateTimeFormatOptions = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZone: 'America/Sao_Paulo'
+    }
+    const dataFormatada = data.toLocaleString('pt-BR', opcoes)
+    return dataFormatada
+}
