@@ -23,13 +23,14 @@ const SignUp = () => {
 
     const [cardout, setCardOut] = useState(false)
     const [userExist, setUserExist] = useState(false)
+    const API_URL = import.meta.env.VITE_API_URL
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault()
 
-        const sanitizedEmail = sanitizeInput(email)
+        const sanitizedEmail = sanitizeInput(email).toLowerCase()
         const sanitizedPassword = sanitizeInput(password)
-        const sanitizedName = sanitizeInput(username)
+        const sanitizedName = sanitizeInput(username).toLowerCase()
         const sanitizedCompletName = sanitizeInput(completName)
 
         if (sanitizedEmail.length === 0) {
@@ -67,7 +68,7 @@ const SignUp = () => {
         ) {
             setCardOut(true)
             axios
-                .post('http://127.0.0.1:8000/api/users/', {
+                .post(`${API_URL}/api/users/`, {
                     username: sanitizedName,
                     email: sanitizedEmail,
                     password: sanitizedPassword,

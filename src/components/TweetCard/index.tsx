@@ -31,6 +31,7 @@ const TweetCard = ({
 }: TweetCardProps) => {
     const [likes, setLikes] = useState(0)
     const token = localStorage.getItem('access')
+    const API_URL = import.meta.env.VITE_API_URL
 
     const handleLike = () => {
         if (likes === 0) {
@@ -42,7 +43,7 @@ const TweetCard = ({
 
     const handleDeletePost = () => {
         axios
-            .delete(`http://127.0.0.1:8000/api/posts/${tweet.id}/`, {
+            .delete(`${API_URL}/api/posts/${tweet.id}/`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

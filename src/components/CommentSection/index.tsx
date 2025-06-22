@@ -21,13 +21,14 @@ const CommentSection = ({
     const [newComment, setNewComment] = useState('')
     const token = localStorage.getItem('access')
     const [comments, setComments] = useState<CommentType[]>()
+    const API_URL = import.meta.env.VITE_API_URL
 
     const handleSubmit = () => {
         if (newComment.trim()) {
             setNewComment('')
             axios
                 .post(
-                    'http://localhost:8000/api/comentarios/',
+                    `${API_URL}/api/comentarios/`,
                     {
                         texto: newComment,
                         post
@@ -51,7 +52,7 @@ const CommentSection = ({
 
     useEffect(() => {
         axios
-            .get(`http://localhost:8000/api/comentarios/?post=${post}`, {
+            .get(`${API_URL}/api/comentarios/?post=${post}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

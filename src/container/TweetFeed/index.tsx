@@ -15,6 +15,7 @@ const TweetFeed = ({ onFollowChange, updatePost }: Props) => {
     const [newTweet, setNewTweet] = useState('')
     const token = localStorage.getItem('access')
     const [update, setUpdate] = useState(false)
+    const API_URL = import.meta.env.VITE_API_URL
 
     const [posts, setPosts] = useState<Post[]>()
     const [postsOtherUsers, setPostsOtherUsers] = useState<Post[]>()
@@ -25,7 +26,7 @@ const TweetFeed = ({ onFollowChange, updatePost }: Props) => {
         if (!newTweet.trim()) return
         axios
             .post(
-                'http://localhost:8000/api/posts/',
+                `${API_URL}/api/posts/`,
                 {
                     conteudo: newTweet
                 },
@@ -54,14 +55,11 @@ const TweetFeed = ({ onFollowChange, updatePost }: Props) => {
         const payload = parseJwt(token)
 
         axios
-            .get(
-                `http://localhost:8000/api/posts/?user_id=${payload.user_id}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+            .get(`${API_URL}/api/posts/?user_id=${payload.user_id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
                 }
-            )
+            })
             .then((res) => {
                 setPosts(res.data)
             })
@@ -70,7 +68,7 @@ const TweetFeed = ({ onFollowChange, updatePost }: Props) => {
             })
 
         axios
-            .get(`http://localhost:8000/api/posts/?exclude_user=me`, {
+            .get(`${API_URL}/api/posts/?exclude_user=me`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

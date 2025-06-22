@@ -10,6 +10,7 @@ import CredentialError from '../../components/CredentialError'
 const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const API_URL = import.meta.env.VITE_API_URL
 
     const [emailEmpty, setEmailEmpty] = useState(false)
     const [passwordEmpty, setPasswordEmpty] = useState(false)
@@ -41,13 +42,13 @@ const Login = () => {
             validatePassword(sanitizedPassword)
         ) {
             axios
-                .post('http://127.0.0.1:8000/api/login', {
+                .post(`${API_URL}/api/login`, {
                     email: sanitizedEmail,
                     password: sanitizedPassword
                 })
                 .then(() => {
                     axios
-                        .post('http://127.0.0.1:8000/api/token/', {
+                        .post(`${API_URL}/api/token/`, {
                             email: sanitizedEmail,
                             password: sanitizedPassword
                         })
@@ -71,11 +72,7 @@ const Login = () => {
 
     useEffect(() => {
         setTimeout(() => {
-            axios.get('http://127.0.0.1:8000/api/user_data').catch((error) => {
-                console.error(
-                    'Erro ao buscar dados do usuário:',
-                    error.response?.data || error.message
-                )
+            axios.get(`${API_URL}/api/user_data`).catch((error) => {
                 if (error.response?.data.code === 'token_not_valid') {
                     localStorage.removeItem('access')
                     localStorage.removeItem('refresh')

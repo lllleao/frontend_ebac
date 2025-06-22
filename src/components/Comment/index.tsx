@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Comment as CommentType } from '../../types'
 import Avatar from '../Avatar'
 import { CommentContainer, CommentContent, Username, Text } from './styles'
+import { useEffect, useState } from 'react'
 
 type CommentProps = {
     comment: CommentType
@@ -11,10 +12,12 @@ type CommentProps = {
 
 const Comment = ({ comment, setUpdate, update }: CommentProps) => {
     const token = localStorage.getItem('access')
+    const [isUser, setIsUser] = useState<boolean>()
+    const API_URL = import.meta.env.VITE_API_URL
 
     const handleDeleteComment = () => {
         axios
-            .delete(`http://localhost:8000/api/comentarios/${comment.id}/`, {
+            .delete(`${API_URL}/api/comentarios/${comment.id}/`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -32,6 +35,23 @@ const Comment = ({ comment, setUpdate, update }: CommentProps) => {
             })
     }
 
+    useEffect(() => {
+        axios
+            .get(`${API_URL}/api/user_data`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            .then((response) => {
+                if (response.data.username === comment.autor.username) {
+                    setIsUser(true)
+                } else {
+                    setIsUser(false)
+                }
+            })
+            .catch(() => {})
+    }, [])
+
     return (
         <CommentContainer>
             <Avatar
@@ -43,12 +63,16 @@ const Comment = ({ comment, setUpdate, update }: CommentProps) => {
                 <Username>@{comment.autor.username}</Username>
                 <Text>{comment.texto}</Text>
             </CommentContent>
-            <span
-                onClick={handleDeleteComment}
-                className="material-symbols-outlined icon"
-            >
-                delete
-            </span>
+            {isUser ? (
+                <span
+                    onClick={handleDeleteComment}
+                    className="material-symbols-outlined icon"
+                >
+                    delete
+                </span>
+            ) : (
+                <div />
+            )}
         </CommentContainer>
     )
 }

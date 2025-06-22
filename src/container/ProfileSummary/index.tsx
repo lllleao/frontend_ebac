@@ -32,6 +32,7 @@ const ProfileSummary = ({
     const [bioBefore, setBioBefore] = useState('')
     const navigate = useNavigate()
     const refImage = useRef<HTMLInputElement>(null)
+    const API_URL = import.meta.env.VITE_API_URL
 
     const [mediaUrl, setMediaUrl] = useState('')
 
@@ -46,7 +47,7 @@ const ProfileSummary = ({
             console.log(bioBefore, bio)
             axios
                 .patch(
-                    'http://127.0.0.1:8000/api/update_bio/',
+                    `${API_URL}/api/update_bio/`,
                     { bio },
                     {
                         headers: {
@@ -70,7 +71,7 @@ const ProfileSummary = ({
     const handleLogout = () => {
         axios
             .post(
-                'http://127.0.0.1:8000/api/logout/',
+                `${API_URL}/api/logout/`,
                 { refresh },
                 {
                     headers: {
@@ -102,7 +103,7 @@ const ProfileSummary = ({
             const formData = new FormData()
             formData.append('avatar', file)
             axios
-                .patch('http://127.0.0.1:8000/api/avatar/', formData, {
+                .patch(`${API_URL}/api/avatar/`, formData, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -120,7 +121,7 @@ const ProfileSummary = ({
     useEffect(() => {
         setTimeout(() => {
             axios
-                .get('http://127.0.0.1:8000/api/user_data', {
+                .get(`${API_URL}/api/user_data`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -140,7 +141,7 @@ const ProfileSummary = ({
                 })
 
             axios
-                .get('http://127.0.0.1:8000/api/avatar/', {
+                .get(`${API_URL}/api/avatar/`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
