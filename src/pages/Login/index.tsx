@@ -71,13 +71,13 @@ const Login = () => {
     }
 
     useEffect(() => {
+        localStorage.removeItem('access')
+        localStorage.removeItem('refresh')
         setTimeout(() => {
-            axios.get(`${API_URL}/api/user_data`).catch((error) => {
-                if (error.response?.data.code === 'token_not_valid') {
-                    localStorage.removeItem('access')
-                    localStorage.removeItem('refresh')
-                }
-            })
+            // axios.get(`${API_URL}/api/user_data`).catch((error) => {
+            //     if (error.response?.data.code === 'token_not_valid') {
+            //     }
+            // })
         }, 2000)
     }, [])
 
