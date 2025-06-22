@@ -121,7 +121,7 @@ const ProfileSummary = ({
     useEffect(() => {
         setTimeout(() => {
             axios
-                .get(`${API_URL}/api/user_data`, {
+                .get(`${API_URL}/api/user_data/`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
