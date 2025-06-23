@@ -1,58 +1,58 @@
-<<<<<<< HEAD
-# React + TypeScript + Vite
+# 🌐 Twitter Clone - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> ⚠️ **Aviso:** Este é apenas o frontend do projeto. O backend está disponível em:  
+> 🔗 [Repositório do Backend](https://github.com/lllleao/backend_ebac.git)
 
-Currently, two official plugins are available:
+Este é o frontend de um clone simplificado do Twitter, desenvolvido com **React 19**, **Vite** e **TypeScript**. Ele consome uma API REST desenvolvida com Django no backend e oferece uma interface amigável para os usuários interagirem com o sistema.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## ✨ Funcionalidades
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Cadastro e login de usuários
+- Listagem e criação de **posts**
+- Criação de **comentários**
+- Exclusão de posts e comentários
+- Visualização e edição do **perfil do usuário**, incluindo:
+  - Atualização de avatar
+  - Edição da bio
+- Navegação por rotas (SPA)
 
-```js
-export default tseslint.config({
-    extends: [
-        // Remove ...tseslint.configs.recommended and replace with this
-        ...tseslint.configs.recommendedTypeChecked,
-        // Alternatively, use this for stricter rules
-        ...tseslint.configs.strictTypeChecked,
-        // Optionally, add this for stylistic rules
-        ...tseslint.configs.stylisticTypeChecked
-    ],
-    languageOptions: {
-        // other options...
-        parserOptions: {
-            project: ['./tsconfig.node.json', './tsconfig.app.json'],
-            tsconfigRootDir: import.meta.dirname
-        }
-    }
-})
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🛠️ Tecnologias e Bibliotecas
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### ⚙️ Stack principal
 
-export default tseslint.config({
-    plugins: {
-        // Add the react-x and react-dom plugins
-        'react-x': reactX,
-        'react-dom': reactDom
-    },
-    rules: {
-        // other rules...
-        // Enable its recommended typescript rules
-        ...reactX.configs['recommended-typescript'].rules,
-        ...reactDom.configs.recommended.rules
-    }
-})
-```
-=======
-# Projeto Final Ebac
->>>>>>> 092ab7195d3f775fdb24cdd9668ee3becd561838
+| Tecnologia        | Versão     | Função principal                                 |
+|-------------------|------------|--------------------------------------------------|
+| **React**         | ^19.0.0    | Biblioteca principal de construção da UI         |
+| **Vite**          | ^6.3.1     | Bundler e servidor de desenvolvimento            |
+| **TypeScript**    | ~5.7.2     | Tipagem estática para JavaScript                 |
+| **React Router**  | ^7.5.2     | Gerenciamento de rotas                           |
+| **Styled Components** | ^6.1.17 | Estilização com CSS-in-JS                        |
+| **Axios**         | ^1.9.0     | Requisições HTTP                                 |
+| **UUID**          | ^11.1.0    | Geração de IDs únicos (por exemplo, para chaves) |
+
+---
+
+### 💻 Dev Tools
+
+- **ESLint + Prettier** — Linting e formatação de código
+- **@vitejs/plugin-react** — Integração do Vite com o React
+- **React Refresh** — Hot reload para desenvolvimento
+
+---
+
+## 📦 Instalação
+
+```bash
+# Clone o repositório
+git clone https://github.com/lllleao/frontend_ebac.git
+cd frontend_ebac
+
+# Instale as dependências
+npm install
+
+# Inicie o servidor de desenvolvimento
+npm run dev
