@@ -62,6 +62,7 @@ const TweetFeed = ({ onFollowChange, updatePost }: Props) => {
             })
             .then((res) => {
                 setPosts(res.data)
+                setNewTweet('')
             })
             .catch((err) => {
                 console.log(err)
