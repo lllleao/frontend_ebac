@@ -6,6 +6,6 @@ export const AppContainer = styled.div`
     background: #f5f8fa;
 
     @media (max-width: 768px) {
-        flex-direction: column;
+        flex-direction: column-reverse;
     }
 `
